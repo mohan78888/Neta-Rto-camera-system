@@ -4,13 +4,16 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 
+import { isSoundEnabled, setSoundEnabled as saveSoundSetting } from '../lib/sound';
+
 export default function Navbar({ user }) {
   const pathname = usePathname();
   const router = useRouter();
   const [clock, setClock] = useState('');
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundEnabled, setSoundState] = useState(true);
 
   useEffect(() => {
+    setSoundState(isSoundEnabled());
     function updateClock() {
       const now = new Date();
       setClock(now.toLocaleTimeString('en-IN', { hour12: false }) + ' IST');
@@ -34,22 +37,9 @@ export default function Navbar({ user }) {
   }
 
   function toggleSound() {
-    setSoundEnabled((prev) => !prev);
-    // Play test ping if turning on
-    if (!soundEnabled) {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.value = 880;
-        gain.gain.setValueAtTime(0.05, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.2);
-      } catch (e) {}
-    }
+    const nextState = !soundEnabled;
+    setSoundState(nextState);
+    saveSoundSetting(nextState);
   }
 
   return (

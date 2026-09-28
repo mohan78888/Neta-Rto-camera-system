@@ -8,6 +8,7 @@ import CameraGrid from '../components/CameraGrid';
 import AlertFeed from '../components/AlertFeed';
 import EventFeed from '../components/EventFeed';
 import { useSocket } from '../lib/useSocket';
+import { playAlertSiren } from '../lib/sound';
 
 const CameraMap = dynamic(() => import('../components/CameraMap'), { 
   ssr: false,
@@ -69,6 +70,8 @@ export default function DashboardPage() {
     new_alert: (alert) => {
       setAlerts((prev) => [alert, ...prev].slice(0, 50));
       setStats((prev) => prev && { ...prev, activeAlerts: prev.activeAlerts + 1 });
+      // Play authentic emergency warning chime
+      playAlertSiren(alert.watchlist?.severity || 'HIGH');
     },
     camera_status: (camera) => {
       setCameras((prev) => prev.map((c) => (c.id === camera.id ? camera : c)));

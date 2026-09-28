@@ -40,8 +40,8 @@ export default function VehiclePage() {
   }, [router]);
 
   async function fetchVehicle(plate) {
-    if (!plate || !plate.trim()) return null;
-    const clean = plate.trim().toUpperCase();
+    if (!plate || !String(plate).trim()) return null;
+    const clean = String(plate).trim().toUpperCase();
     try {
       const res = await fetch(`/api/vehicle/${encodeURIComponent(clean)}`);
       if (res.ok) {
@@ -54,8 +54,10 @@ export default function VehiclePage() {
   }
 
   async function traceTargets(plate1, plate2) {
-    const t1 = (plate1 !== undefined ? plate1 : target1).trim().toUpperCase();
-    const t2 = (plate2 !== undefined ? plate2 : target2).trim().toUpperCase();
+    const rawT1 = plate1 !== undefined ? plate1 : target1;
+    const rawT2 = plate2 !== undefined ? plate2 : target2;
+    const t1 = rawT1 ? String(rawT1).trim().toUpperCase() : '';
+    const t2 = rawT2 ? String(rawT2).trim().toUpperCase() : '';
 
     if (!t1 && !t2) return;
     setLoading(true);
