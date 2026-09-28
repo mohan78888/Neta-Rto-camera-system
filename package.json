@@ -1,0 +1,21 @@
+{
+  "name": "okdriver-cctv-platform-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "okDriver CCTV & Video Analytics Platform - Decoupled Express Backend & Next.js Frontend",
+  "scripts": {
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "start:backend": "npm --prefix backend start",
+    "start:frontend": "npm --prefix frontend start",
+    "seed:backend": "npm --prefix backend run seed",
+    "build:frontend": "npm --prefix frontend run build",
+    "install:backend": "npm --prefix backend install",
+    "install:frontend": "npm --prefix frontend install",
+    "install:all": "npm run install:backend && npm run install:frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'leaflet/dist/leaflet.css';
+
+:root {
+  --color-primary: #f59e0b;
+  --color-crimson: #ef4444;
+  --color-navy-dark: #07090e;
+  --color-panel: rgba(15, 20, 32, 0.75);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, sans-serif;
+  background-color: #07090e;
+  color: #f1f5f9;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(239, 68, 68, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.04) 0%, transparent 40%);
+  background-attachment: fixed;
+}
+
+/* Glassmorphism & Command Center UI */
+.glass-panel {
+  background: rgba(15, 20, 32, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+}
+
+.glass-panel-glow {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.glass-panel-danger {
+  background: rgba(26, 15, 18, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.12);
+}
+
+/* Leaflet Container customization */
+.leaflet-container {
+  background: #090d16 !important;
+  border-radius: 0.75rem;
+}
+
+/* 100% Free Dark Invert Filter for Standard OpenStreetMap Tiles (No API key needed) */
+.leaflet-tile-pane {
+  filter: brightness(0.65) invert(1) contrast(2.6) hue-rotate(200deg) saturate(0.3) brightness(0.8);
+}
+
+/* Custom Cyber Scrollbars */
+::-webkit-scrollbar { 
+  width: 6px; 
+  height: 6px; 
+}
+::-webkit-scrollbar-track { 
+  background: #07090e; 
+}
+::-webkit-scrollbar-thumb { 
+  background: #1e293b; 
+  border-radius: 9999px; 
+}
+::-webkit-scrollbar-thumb:hover { 
+  background: #334155; 
+}
+
+/* Real-Time Pulse Animations */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+@keyframes live-indicator {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.9); }
+}
+
+.alert-pulse { 
+  animation: pulse-ring 1.8s infinite; 
+}
+
+.live-dot {
+  animation: live-indicator 1.6s infinite ease-in-out;
+}
+
+/* Road Cyber Grid Background Pattern */
+.bg-cyber-grid {
+  background-size: 36px 36px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* CCTV HUD Scanline effect */
+.cctv-scanline {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.35) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+/* Corner Reticle Brackets */
+.hud-corner-tl { position: absolute; top: 5px; left: 5px; width: 8px; height: 8px; border-top: 1.5px solid rgba(245,158,11,0.7); border-left: 1.5px solid rgba(245,158,11,0.7); pointer-events: none; z-index: 20; }
+.hud-corner-tr { position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-top: 1.5px solid rgba(245,158,11,0.7); border-right: 1.5px solid rgba(245,158,11,0.7); pointer-events: none; z-index: 20; }
+.hud-corner-bl { position: absolute; bottom: 5px; left: 5px; width: 8px; height: 8px; border-bottom: 1.5px solid rgba(245,158,11,0.7); border-left: 1.5px solid rgba(245,158,11,0.7); pointer-events: none; z-index: 20; }
+.hud-corner-br { position: absolute; bottom: 5px; right: 5px; width: 8px; height: 8px; border-bottom: 1.5px solid rgba(245,158,11,0.7); border-right: 1.5px solid rgba(245,158,11,0.7); pointer-events: none; z-index: 20; }
+
+/* Surveillance Sensor Modes */
+.cctv-filter-night {
+  filter: brightness(1.25) contrast(1.5) hue-rotate(85deg) saturate(3.5) sepia(0.6);
+}
+.cctv-filter-thermal {
+  filter: contrast(2.2) saturate(3.2) hue-rotate(190deg) invert(0.15);
+}
+.cctv-filter-mono {
+  filter: grayscale(1) contrast(1.4) brightness(0.95);
+}

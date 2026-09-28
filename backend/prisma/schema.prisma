@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// NOTE: SQLite does not support native enums, so Role and status are plain
+// Strings here (values: Role = "ADMIN" | "OPERATOR", status = "ONLINE" |
+// "OFFLINE" | "DEGRADED"). If you migrate to Postgres/MySQL in production,
+// you can reintroduce `enum Role { ADMIN OPERATOR }` / `enum CameraStatus { ... }`
+// and change these fields back to the enum type — no application code changes
+// are needed since the app already compares against string literals.
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("OPERATOR")
+  createdAt DateTime @default(now())
+}
+
+model Camera {
+  id             Int          @id @default(autoincrement())
+  code           String       @unique // e.g. C001
+  name           String
+  department     String
+  latitude       Float
+  longitude      Float
+  cameraType     String       // fixed, PTZ, ANPR, body-worn etc
+  sourceProtocol String       // RTSP, ONVIF, HLS, SIMULATED
+  streamRef      String       // reference/path to stream (sample video file or RTSP url placeholder)
+  zone           String
+  status         String       @default("OFFLINE")
+  lastHeartbeat  DateTime?
+  storageMeta    String? // json string: retention, storage tier etc
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  events         Event[]
+  auditLogs      AuditLog[]
+
+  @@index([status])
+  @@index([zone])
+}
+
+model WatchlistEntry {
+  id            Int      @id @default(autoincrement())
+  entityType    String   // VEHICLE, PERSON
+  identifier    String   // vehicle number or person id/name
+  reason        String   // stolen, blacklisted, wanted, missing
+  severity      String   @default("HIGH") // LOW, MEDIUM, HIGH, CRITICAL
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  alerts        Alert[]
+
+  @@index([identifier, active])
+}
+
+model Event {
+  id           Int      @id @default(autoincrement())
+  camera       Camera   @relation(fields: [cameraId], references: [id])
+  cameraId     Int
+  eventType    String   // ANPR, VEHICLE_DETECTION, PERSON_DETECTION
+  vehicleNumber String?
+  personId     String?
+  confidence   Float
+  boundingBox  String?  // json string
+  timestamp    DateTime @default(now())
+  alerts       Alert[]
+
+  @@index([vehicleNumber, timestamp])
+  @@index([cameraId, timestamp])
+  @@index([timestamp])
+}
+
+model Alert {
+  id            Int             @id @default(autoincrement())
+  event         Event           @relation(fields: [eventId], references: [id])
+  eventId       Int
+  watchlist     WatchlistEntry  @relation(fields: [watchlistId], references: [id])
+  watchlistId   Int
+  status        String          @default("NEW") // NEW, ACKNOWLEDGED, RESOLVED
+  createdAt     DateTime        @default(now())
+  resolvedAt    DateTime?
+
+  @@index([status, createdAt])
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  action    String
+  detail    String?
+  camera    Camera?  @relation(fields: [cameraId], references: [id])
+  cameraId  Int?
+  createdAt DateTime @default(now())
+
+  @@index([cameraId])
+}
